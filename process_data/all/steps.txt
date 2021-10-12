@@ -1,0 +1,83 @@
+dir: primitive-based_3d/process_data/all
+/code
+/input
+/output
+/visual (code: /visualization/visualize_everything.m)
+
+
+step 1
+downsample voxels (128 to 32) (maxpooling)
+code:       /downsample.py 
+            (from 3dprnn_pytorch/eval/mIOU.py)
+input:      /model/chair/*/voxel.mat
+output:     /chair/downsampled_voxels_chair.mat, voxels_dir_chair.txt
+visual:     /downsample/chair/
+
+
+step 2
+crop and resize images (1.1 times, short edge to 320)
+code:       /crop_images.py 
+            (from image_process/crop_images.py)
+input:      /img/chair/*; pix3d.json
+output:     /chair/images_crop_object/*
+
+
+step 3
+split train val test by voxels and match images and voxels
+(note that there are voxels corresponding to more than 100 images)
+(random more times to guarantee a good splitting ratio)
+code:       /split_voxel_then_img.py 
+            (from pix3d/json_process/split_voxel_then_img.py)
+input:      /pix3d.json; ../output/chair/voxels_dir_chair.txt
+output:     /chair/img_voxel_idxs.mat, voxeltxt/*
+
+
+step 4
+split train into a and b for stack learning by voxels
+code:       /split_train_for_stack_learning.py
+input:      ../output/chair/voxels_dir_chair.txt, voxeltxt/*train.txt
+output:     /chair/voxeltxt/stack_img_idxs.mat
+
+
+step 5
+copy test_cls.txt
+cd voxeltxt; scp -r val.txt test_cls.txt
+
+
+step 6
+generate primitives (prim draft data)
+code:       /box_generation/demo.m
+            (variable: cls, gt_num = 1:20, 21:40, run parallelly on AI server)
+output:     /chair/mat/*
+
+
+step 7
+edit primitives
+(along with visualization, note that:
+1. pause after load prim_save, change value in prim_save, continue to save
+2. before continue to save, point somewhere with no value
+3. add semantic label (1-n) in colume 22
+4. put 11 in colume 10 if this prim is to be deleted)
+code:       /box_generation/post_process.m
+input:      /chair/mat/Myprim*.mat
+output:     /chair/mat/Myprim*.mat, Myprimset.mat 
+			(mkdir ../primset_sem;scp -r Myprimset.mat ../primset_sem/Myprimset_all.mat)
+
+
+step 8
+primitive voxelization (for IOU)
+code:       /voxelization.py
+input:      /chair/primset_sem/Myprimset_all.mat
+output:     /chair/primset_sem/Myvoxel_all.mat
+
+
+step 9
+projection of primitives for part box2d
+(visualize 3d kp and 3d prim_kp alignment, 3d kp to 2d render original image,
+3d kp to 2d cropped image, 3d prim to 2d cropped image and 2d box)
+code:		/projection.py
+input:		/pix3d.json, /model/*/3d_keypoints.txt, /depth_map/render*;
+			../output/chair/voxels_dir_chair.txt, img_voxel_idxs.mat, 
+			primset_sem/Myprimset_all.mat
+output:		/chair/kp_2d_projected.json
+

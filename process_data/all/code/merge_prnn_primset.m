@@ -1,0 +1,23 @@
+root = '/Users/heqian/Research/projects/primitive-based_3d/process_data/all';
+cls = 'table';
+train_primset_dir = [root '/input/3dprnn/prim_gt/prim_sort_mn_' cls '_train.mat'];
+test_primset_dir = [root '/input/3dprnn/prim_gt/prim_sort_mn_' cls '_test.mat'];
+save_primset_dir = [root '/output/3dprnn' cls '/primset_sem'];
+mkdir(save_primset_dir);
+save_primset_dir = [save_primset_dir '/Myprimset_all.mat'];
+train_primset = load(train_primset_dir);
+test_primset = load(test_primset_dir);
+train_primset = train_primset.primset;
+test_primset = test_primset.primset;
+primset = [train_primset; test_primset];
+save(save_primset_dir, 'primset');
+
+train_model_dir = [root '/input/3dprnn/ModelNet10_mesh/' cls '/modelnet_' cls '_train.mat'];
+test_model_dir = [root '/input/3dprnn/ModelNet10_mesh/' cls '/modelnet_' cls '_test.mat'];
+save_model_dir = [root '/output/3dprnn' cls '/primset_sem/modelnet_all.mat'];
+train_vox = load(train_model_dir);
+train_vox = train_vox.voxTile;
+test_vox = load(test_model_dir);
+test_vox = test_vox.voxTile;
+voxTile = cat(1, train_vox, test_vox);
+save(save_model_dir, 'voxTile');
