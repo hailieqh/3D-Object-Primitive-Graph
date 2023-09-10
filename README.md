@@ -3,12 +3,10 @@
 
 The official code for "[Single Image 3D Object Estimation with Primitive Graph Networks](https://arxiv.org/abs/2109.04153)" (ACM Multimedia 2021).
 
-<!-- ---
-TODO
-- [x] Code for data processing
-- [ ] Primitive annotations
-- [ ] Code for training and inference
-- [ ] Trained models and results -->
+
+
+https://github.com/hailieqh/3D-Object-Primitive-Graph/assets/25678575/04b4b739-1e2f-404d-beed-6a5619ea34d7
+
 
 
 ## Prerequisites
@@ -25,7 +23,7 @@ pip install -r requirements.txt
 
 ## Data Preparation
 
-Our primitive annotations can be downloaded from [primitive_resources](https://drive.google.com/file/d/1dz0bH4LSbRMg8Y7-UMww4zVC6_POTiet/view?usp=drive_link).
+Our primitive annotations can be downloaded from [primitive_resources](https://drive.google.com/file/d/1wXSudsd3Am86ZuPRJV1h4oApTIIFecsg/view?usp=drive_link).
 
 We provide Chair from [Pix3D](https://github.com/xingyuansun/pix3d) as an example.
 
